@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    nexus3:
+        image: sonatype/nexus3:latest
+        container_name: nexus3
+        environment:
+            - INSTALL4J_ADD_VM_PARAMS= -Xms2703m -Xmx2703m -XX:MaxDirectMemorySize=2703m
+        ports:
+            - "8088:8081"
+        #volumes:
+        #    - /data:/nexus-data

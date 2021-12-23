@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    traefik-proxy:
+        image: traefik:latest
+        container_name: traefik-proxy
+        command: --api.insecure=true --providers.docker
+        ports:
+            - "80:80"
+            - "443:443"
+            - "12345:8080"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./:/etc/traefik/

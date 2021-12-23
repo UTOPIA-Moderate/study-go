@@ -1,0 +1,28 @@
+## STATIC CONFIGURATION
+log:
+  level: WARN
+
+api:
+  insecure: true
+  dashboard: true
+
+entryPoints:
+  web:
+    address: ":80"
+  web-secure:
+    address: ":443"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+#开启acme
+certificatesResolvers:
+  sample:
+    acme:
+      email: your-email@your-domain.org
+      storage: acme.json
+      # 在验证期间使用
+      httpChallenge: 
+        entryPoint: web
