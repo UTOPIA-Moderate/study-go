@@ -30,13 +30,13 @@ echo 同步时间
 systemctl enable chronyd --now
 chronyc -a makestep
 
-echo 写入公钥
-mkdir ~/.ssh
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxHm4YvEmueduuH/UVzp6SAvO8L+XtqYMTAMZflzoJSLJ70VqraBcM+LTvbE0Wxh/CDlc/4K/mFIUVdlymqYQttcxGrPh2pU8iC3Fy/5DbGZ/HZvbF8Q/7rzPTUKynjxTMsg7sryzJP4FSZEYCU4/d8P5m71lh9uMDf74UvCGVX3JwG12/id+9Go3e/1AyK2RkGB1vX/IocrmMWd3fMojrUeGzGvMy+U0UIxYE/6r0upXyOo1nurXmJexBE1PZJWXFQjaYfVvSd+dUOtf/6HK10A0iM213NMP5LnccEx7pDRFfZGds1KeZx89eO0MQ49gVLtvGjuRtNxCacYYaWG9yQ== rsa 2048-011521 >> ~/.ssh/authorized_keys
+#echo 写入公钥
+#mkdir ~/.ssh
+#echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxHm4YvEmueduuH/UVzp6SAvO8L+XtqYMTAMZflzoJSLJ70VqraBcM+LTvbE0Wxh/CDlc/4K/mFIUVdlymqYQttcxGrPh2pU8iC3Fy/5DbGZ/HZvbF8Q/7rzPTUKynjxTMsg7sryzJP4FSZEYCU4/d8P5m71lh9uMDf74UvCGVX3JwG12/id+9Go3e/1AyK2RkGB1vX/IocrmMWd3fMojrUeGzGvMy+U0UIxYE/6r0upXyOo1nurXmJexBE1PZJWXFQjaYfVvSd+dUOtf/6HK10A0iM213NMP5LnccEx7pDRFfZGds1KeZx89eO0MQ49gVLtvGjuRtNxCacYYaWG9yQ== rsa 2048-011521 >> ~/.ssh/authorized_keys
 
-echo 禁用ssh密码登陆
-sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config 
-systemctl restart sshd
+#echo 禁用ssh密码登陆
+#sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config 
+#systemctl restart sshd
 
 echo 安装基础软件包
 dnf install wget vim lrzsz tar ipset ipvsadm -y
@@ -119,10 +119,16 @@ EOF
 echo 卸载旧版本
 dnf remove -y kubelet kubeadm kubectl
 
-echo 安装kubelet、kubeadm、kubectl 1.23.1 版本 
+echo 安装kubelet、kubeadm、kubectl 1.23.1 版本 node节点可以屏蔽kubectl
 dnf install -y kubelet-1.23.1 kubeadm-1.23.1 kubectl-1.23.1 --disableexcludes=kubernetes
 
 crictl config runtime-endpoint unix:///run/containerd/containerd.sock
+
+echo kubectl自动补全功能 master节点运行这个 node节点可以屏蔽这个
+dnf install -y bash-completion
+source /usr/share/bash-completion/bash_completion
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 # 重启 docker，并启动 kubelet
 systemctl daemon-reload
