@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  image-registry:
+    container_name: registry
+    image: registry:2
+    volumes:
+      - ./data:/var/lib/registry
+      - ./auth:/auth
+      - E:\MakeDocker\cfssl\ssl:/cert
+    ports: 
+      - 5467:5467
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Image registry
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5467
+      REGISTRY_HTTP_TLS_CERTIFICATE: /cert/certificates/registry-dev-fullchain.pem
+      REGISTRY_HTTP_TLS_KEY: /cert/certificates/registry-dev-key.pem
+    restart: unless-stopped
