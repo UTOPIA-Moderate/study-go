@@ -79,20 +79,21 @@ gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
         http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
 
+echo 卸载旧版本containerd
+yum remove -y containerd.io
+
 echo 下载containerd
-wget https://ccysh.club/https://github.com/containerd/containerd/releases/download/v1.5.5/cri-containerd-cni-1.5.5-linux-amd64.tar.gz
+wget https://clone.tapoop.com/https://github.com/containerd/containerd/releases/download/v1.5.5/cri-containerd-cni-1.5.5-linux-amd64.tar.gz
 
 echo 解压containerd
 tar -C / -xzf cri-containerd-cni-1.5.5-linux-amd64.tar.gz
-
-echo 卸载旧版本containerd
-yum remove -y containerd.io
 
 echo 生成containerd配置文件
 mkdir -p /etc/containerd/
 containerd config default > /etc/containerd/config.toml
 sed -i "s#k8s.gcr.io#registry.aliyuncs.com/google_containers#g"  /etc/containerd/config.toml
-sed -i "s#https://registry-1.docker.io#registry.aliyuncs.com/google_containers#g"  /etc/containerd/config.toml
+
+# sed -i "s#https://registry-1.docker.io#registry.aliyuncs.com/google_containers#g"  /etc/containerd/config.toml
 
 echo 设置环境变量
 export PATH=$PATH:/usr/local/bin:/usr/local/sbin
@@ -134,5 +135,5 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 systemctl daemon-reload
 systemctl enable kubelet --now
 
-containerd --versions
+containerd  -v
 kubelet --version
