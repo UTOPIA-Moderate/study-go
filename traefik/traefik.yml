@@ -1,28 +1,23 @@
-## STATIC CONFIGURATION
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
 log:
-  level: WARN
-
+  level: "ERROR"
+  format: "common"
+  filePath: "/var/log/traefik/traefik.log"
 api:
-  insecure: true
   dashboard: true
-
-entryPoints:
+  insecure: true
+  debug: false
+ping:
+  entryPoint: traefik
+entrypoints:
   web:
     address: ":80"
-  web-secure:
+  websecure:
     address: ":443"
-
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-
-#开启acme
-certificatesResolvers:
-  sample:
-    acme:
-      email: your-email@your-domain.org
-      storage: acme.json
-      # 在验证期间使用
-      httpChallenge: 
-        entryPoint: web
+    defaultRule: Host(`{{ normalize .Name }}.docker.localhost`)

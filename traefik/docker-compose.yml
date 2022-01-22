@@ -4,11 +4,13 @@ services:
     traefik-proxy:
         image: traefik:latest
         container_name: traefik-proxy
+        restart: always
         command: --api.insecure=true --providers.docker
         ports:
             - "80:80"
             - "443:443"
-            - "12345:8080"
+            - "8080:8080"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./:/etc/traefik/
+            - ./config:/etc/traefik/
+            - ./acme:/etc/traefik/acme
